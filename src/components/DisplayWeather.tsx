@@ -44,6 +44,20 @@ const DisplayWeather = () => {
     const response = await axios.get(url);
     return response.data;
   };
+
+  const iconChanger =  (weather:string) => {
+    if (weather === "Clear") {
+      return <WiDaySunny />;
+    } else if (weather === "Clouds") {
+      return <WiCloudy />;
+    } else if (weather === "Rain") {
+      return <WiRain />;
+    } else if (weather === "Mist") {
+      return <WiFog />;
+    } else {
+      return <TiWeatherPartlySunny />;
+    }
+  }
   
 
   React.useEffect(()=>{
@@ -73,7 +87,7 @@ const DisplayWeather = () => {
         <div className="weather">
         <h1 className="location">{weatherData.name}</h1>
         <span>{weatherData.sys.country}</span>
-        <div className="weather-icon">ICON</div>
+        <div className="weather-icon">{iconChanger(weatherData.weather[0].main)}</div>
       </div>
       <div className="temperature">
         <h1>{weatherData.main.temp}</h1>
