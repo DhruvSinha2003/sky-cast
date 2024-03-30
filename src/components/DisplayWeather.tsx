@@ -37,19 +37,21 @@ interface WeatherProps {
 const DisplayWeather = () => {
 
   const key = process.env.REACT_APP_API_KEY;
-  const [weather, setWeather] = React.useState<WeatherProps | null>(null);
+  const [weatherData, setWeatherData] = React.useState<WeatherProps | null>(null);
+  
   const fetchWeather = async (lat: number, lon: number) => {
-  const url = `http://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&appid=${key}`;
-  const response = await axios.get(url);
-  return response.data;
-};
+    const url = `http://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${key}&units=metric`;
+    const response = await axios.get(url);
+    return response.data;
+  };
+  
 
   React.useEffect(()=>{
     navigator.geolocation.getCurrentPosition((position)=>{
       const {latitude, longitude} = position.coords;
       Promise.all([fetchWeather(latitude, longitude)]).then(
         ([weather])=>{
-            console.log(weather);
+            setWeatherData(weather);
             })
         })
   })
@@ -66,31 +68,36 @@ const DisplayWeather = () => {
           <AiOutlineSearch className="search-icon" />
         </div>
       </div>
-      <div className="weather">
-        <h1 className="location">Location</h1>
-        <span>IN</span>
+      {weatherData && (
+        <>
+        <div className="weather">
+        <h1 className="location">{weatherData.name}</h1>
+        <span>{weatherData.sys.country}</span>
         <div className="weather-icon">ICON</div>
       </div>
       <div className="temperature">
-        <h1>25°C</h1>
-        <span>Cloudy</span>
+        <h1>{weatherData.main.temp}</h1>
+        <h2>{weatherData.weather[0].main}</h2>
       </div>
       <div className="info">
         <div className="humidity">
           <WiHumidity className="info-icon" />
           <div className="more-info">
-            <h1>60%</h1>
+            <h1>{weatherData.main.humidity}%</h1>
             <p>Humidity</p>
           </div>
         </div>
         <div className="wind">
           <SiWindicss className="info-icon" />
           <div className="more-info">
-            <h1>2.56 km/hr</h1>
+            <h1>{weatherData.wind.speed}km/h</h1>
             <p>wind Speed</p>
           </div>
         </div>
       </div>
+        </>
+      )}
+      
     </div>
   );
 };
