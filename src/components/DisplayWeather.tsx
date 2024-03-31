@@ -13,7 +13,6 @@ import { RiLoaderFill } from "react-icons/ri";
 import { TiWeatherPartlySunny } from "react-icons/ti";
 import "react-dotenv";
 import axios from "axios";
-import { count } from "console";
 
 interface WeatherProps {
   name: string;
@@ -88,18 +87,24 @@ const DisplayWeather = () => {
   };
 
   React.useEffect(() => {
-    navigator.geolocation.getCurrentPosition((position) => {
-      const { latitude, longitude } = position.coords;
-      if (!weatherData) {
-        Promise.all([fetchWeather(latitude, longitude)]).then(([weather]) => {
-          setWeatherData(weather);
-          setLoading(true);
-        });
-      }
-    },
-    (error) => console.error(error) 
-  );
-}, []);
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        if (!weatherData) {
+          Promise.all([fetchWeather(latitude, longitude)]).then(([weather]) => {
+            setWeatherData(weather);
+            setLoading(true);
+          });
+        }
+      },
+      (error) => console.error(error)
+    );
+  }, []);
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   return (
     <div className="container">
@@ -110,6 +115,7 @@ const DisplayWeather = () => {
           placeholder="Search for a location."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
+          onKeyDown={handleKeyPress}
         />
         <div className="search-circle">
           <AiOutlineSearch className="search-icon" onClick={handleSearch} />
@@ -125,7 +131,7 @@ const DisplayWeather = () => {
             </div>
           </div>
           <div className="temperature">
-            <h1>{weatherData.main.temp}</h1>
+            <h1>{weatherData.main.temp}°C</h1>
             <h2>{weatherData.weather[0].main}</h2>
           </div>
           <div className="info">
@@ -140,7 +146,7 @@ const DisplayWeather = () => {
               <SiWindicss className="info-icon" />
               <div className="more-info">
                 <h1>{weatherData.wind.speed}km/h</h1>
-                <p>wind Speed</p>
+                <p>Wind Speed</p>
               </div>
             </div>
           </div>
