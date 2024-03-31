@@ -72,6 +72,17 @@ const DisplayWeather = () => {
     }
   };
 
+  const getContainerClass = () => {
+    if (weatherData) {
+      const weatherCondition = weatherData.weather[0].main.toLowerCase();
+      if (weatherCondition === "clear") return "container sunny";
+      if (weatherCondition === "clouds") return "container cloudy";
+      if (weatherCondition === "rain") return "container rainy";
+      if (weatherCondition === "mist") return "container foggy";
+    }
+    return "container";
+  };
+
   const iconChanger = (weather: string) => {
     if (weather === "Clear") {
       return <WiDaySunny />;
@@ -107,7 +118,7 @@ const DisplayWeather = () => {
   };
 
   return (
-    <div className="container">
+    <div className={getContainerClass()}>
       <div className="search">
         <input
           type="text"
